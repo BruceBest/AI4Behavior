@@ -1,139 +1,141 @@
-# How to Start Using This Project
+# AI4Behavior — ASD-HI Dataset Explorer
 
-## Installation
+A React + Express web application for exploring and annotating the **ASD-HI**
+(Autism Spectrum Disorder — Human Interaction) video dataset. Researchers can
+browse, filter, and annotate parent-child interaction videos.
 
-1. **Clone the repository** from GitHub:
-
-   ```bash
-   git clone https://github.com/JinchengLyu/AI4Behavior.git
-   cd ./AI4Behavior
-   ```
-
-2. **Install dependencies:**
-
-   Run
-   ```bash
-   npm run prereq
-   ```
-   to check prerequsite
-
-   OR
-
-   Navigate to the root directory and install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-   Navigate to the `backend` directory and install backend dependencies:
-
-   ```bash
-   cd backend
-   npm install
-   ```
-
-   Put any file need to be downloaded under 
-   ```text
-   backend/files
-   ```
-
-   file structure seen on
-   ```text
-   backend/Files_structure.txt
-   ```
-
-## Running the Project
-
-### **Start the service:**
-
-Open a terminal and ensure your current working directory is the root of the project.
-
-Run the following command to start the frontend:
+## Architecture
 
 ```
+Browser (React CRA, port 3210)
+    ↕ REST API
+Express backend (port 4005)
+    ↕ Supabase JS client
+Supabase (PostgreSQL + REST API)
+```
+
+- **Frontend:** React (Create React App), Ant Design, video-react
+- **Backend:** Express + SQLite (local) → Supabase (cloud PostgreSQL)
+- **Database:** Data lives in Supabase. A local `dump.sql` is provided for
+  importing into a new Supabase project.
+
+## Prerequisites
+
+- **Node.js ≥ 18**
+- **npm ≥ 9**
+- A **Supabase** project with the `videos` and `passcodes` tables set up.
+  Use `backend/dump.sql` to create the schema and seed data.
+
+## Quick Start
+
+### 1. Clone
+
+```bash
+git clone https://github.com/BruceBest/AI4Behavior.git
+cd AI4Behavior
+```
+
+### 2. Install dependencies
+
+```bash
+# One-shot: install both frontend and backend deps
+bash install_dependence.sh
+
+# Or manually:
+npm install          # root (React frontend)
+cd backend
+npm install          # Express backend
+cd ..
+```
+
+### 3. Configure environment variables
+
+This project **requires** a Supabase instance. Create these two files:
+
+**`.env`** (project root — for the React frontend):
+```env
+REACT_APP_SUPABASE_URL=https://your-project.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=eyJhbGciOi...your-anon-key
+```
+
+**`backend/.env`** (for the Express server):
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...your-service-role-key
+```
+
+> ⚠️ The project will not work without a Supabase instance.
+> See [Supabase Setup](#supabase-setup) below.
+
+### 4. Start
+
+```bash
 npm start
-
 ```
 
-1. **Frontend:**
+This runs **both** frontend and backend via `concurrently`:
 
-   The frontend will be available at http://localhost:3210.
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3210 |
+| Backend API | http://localhost:4005 |
 
-2. **Backend:**
+---
 
-   The backend will be available at http://localhost:4005
+## Supabase Setup
 
-# Getting Started with Create React App
+If you don't have the original Supabase project, create a new one:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1. Go to [supabase.com](https://supabase.com) → New project
+2. Copy your **Project URL** and **anon key** (from Settings → API)
+3. Get the **service_role key** (from Settings → API → service_role)
+4. Run `backend/dump.sql` against your Supabase SQL Editor to create tables
+   and seed the sample data
+5. Fill in the `.env` files as described above
+
+---
+
+## Project Structure
+
+```
+AI4Behavior/
+├── public/                  # Static assets, logos, sample videos
+├── src/                     # React frontend source
+│   ├── App.js               # Router + layout
+│   ├── DataExplore/         # Data browsing, filtering, tasks
+│   ├── People/              # Team member profiles
+│   ├── protecter/           # Passcode-based access control
+│   └── accountManage/       # Login / register
+├── backend/
+│   ├── server.js            # Express entry point (port 4005)
+│   ├── routes/              # API routes (video, file, passcode, application)
+│   ├── db/database.js       # Supabase client + query functions
+│   ├── dump.sql             # Database schema + seed data
+│   └── video_clips/         # Sample video clips
+├── install_dependence.sh    # One-shot dependency install script
+└── package.json             # Root package (CRA + concurrently)
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start frontend + backend (via concurrently) |
+| `npm run build` | Production build (React) |
+| `npm test` | Run frontend tests |
+| `bash install_dependence.sh` | Install all dependencies |
 
-### `npm install`
+---
 
-Install dependencies
+## Troubleshooting
 
-### `npm start`
+**"Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"**
+→ Your `backend/.env` file is missing or incomplete. Check Step 3 above.
 
-Runs the app in the development mode.\
-Open [http://localhost:3210](http://localhost:3000) to view it in your browser.
+**Frontend loads but no data / blank page**
+→ The Supabase project may be paused or deleted. Check
+  https://your-project.supabase.co in a browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Port 3210 or 4005 already in use**
+→ Kill the existing process, or change PORT in `package.json` (frontend)
+  and `backend/server.js` (backend).

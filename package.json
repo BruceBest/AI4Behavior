@@ -2,7 +2,6 @@
   "name": "kickoff",
   "version": "0.1.0",
   "private": true,
-  "start": "next start -H 0.0.0.0 -p 3210",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -38,6 +37,15 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\](?!(antd|@ant-design|rc-|swiper|ssr-window|dom7)[/\\\\]).+\\.(js|jsx|mjs|cjs|ts|tsx)$"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js",
+      "^swiper/css/(.*)$": "<rootDir>/src/__mocks__/swiper/css.js"
+    }
   },
   "browserslist": {
     "production": [

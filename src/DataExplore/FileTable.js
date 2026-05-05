@@ -2,9 +2,10 @@ import { React, useEffect, useState } from "react";
 import "./FileTable.css";
 import Filter from "./Filter/Filter";
 import { BACKEND } from "../consts";
-import { Table, message, Button } from "antd";
-import { Content } from "antd/es/layout/layout";
+import { Table, message, Button, Layout } from "antd";
 import ProtectedRoute from "../protecter/validate";
+
+const { Content } = Layout;
 
 const FileTable = () => {
   const [filterOptions, setFilterOptions] = useState([]);
